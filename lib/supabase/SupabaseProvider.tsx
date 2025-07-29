@@ -33,7 +33,7 @@ export default function SupabaseProvider({
         setSupabase(client)
         setIsLoaded(true)
     }, [session])
-    return <Context.Provider value={{supabase, isLoaded}}>{isLoaded? <div>Loading...</div> : children}</Context.Provider>
+   return <Context.Provider value={{supabase, isLoaded}}>{!isLoaded ? <div>Loading...</div> : children}</Context.Provider>
 
 }
 

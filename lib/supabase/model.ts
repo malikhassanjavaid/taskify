@@ -14,6 +14,7 @@ export interface Column {
     sort_order: number;
     board_id: string;
     created_at: string;
+    user_id: string;
 }
 
 export interface Task {
