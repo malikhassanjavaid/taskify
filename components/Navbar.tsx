@@ -1,99 +1,137 @@
-"use client";
+"use client"
 
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
-import Link from "next/link";
-import { ArrowLeft, ArrowRight, MoreHorizontal } from "lucide-react";
-import { usePathname } from "next/navigation";
+import Image from "next/image"
+import Link from "next/link"
+import {
+  SignInButton,
+  SignUpButton,
+  UserButton,
+  useUser,
+} from "@clerk/nextjs"
+import { ArrowLeft, ArrowRight, Filter, MoreHorizontal } from "lucide-react"
+import { usePathname } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import { Badge } from "./ui/badge"
 
 interface Props {
-  boardTitle?: string;
-  onEditBoard?: () => void;
-
+  boardTitle?: string
+  onEditBoard?: () => void
+  onFilterClick?: () => void
+  filterCount?: number
 }
 
-export default function Navbar({boardTitle, onEditBoard}: Props) {
-  const { isSignedIn, user } = useUser();
+export default function Navbar({
+  boardTitle,
+  onEditBoard,
+  onFilterClick,
+  filterCount = 0,
+}: Props) {
+  const { isSignedIn, user } = useUser()
   const pathname = usePathname()
 
   const isDashboardPage = pathname === "/dashboard"
   const isBoardPage = pathname.startsWith("/boards/")
 
-  if(isDashboardPage) {
-    return(
-       <nav className="bg-white shadow-sm w-full">
-      <div className="max-w-screen-xl mx-auto flex items-center justify-between px-4 sm:px-6 py-4">
-        {/* Logo & Title */}
-        <div className="flex items-center">
-          <Image src="/taskify.png" alt="Taskify Logo" width={40} height={40} />
-          <span className="text-xl sm:text-2xl font-bold text-[#062a4d]">Taskify</span>
+  if (isDashboardPage) {
+    return (
+      <nav className="bg-white dark:bg-gray-950 shadow-sm w-full">
+        <div className="max-w-screen-xl mx-auto flex flex-wrap items-center justify-between px-4 sm:px-6 py-3 gap-2">
+          {/* Logo */}
+          <div className="flex items-center gap-2">
+            <Image src="/taskify.png" alt="Taskify Logo" width={36} height={36} />
+            <span className="text-lg sm:text-2xl font-bold text-[#062a4d]">
+              Taskify
+            </span>
+          </div>
+          {/* User */}
+          <div className="flex items-center space-x-3">
+            <UserButton />
+          </div>
         </div>
-        {/* Right-side */}
-        <div className="flex items-center space-x-3">
-         <UserButton/>
-        </div>
-      </div>
-    </nav>
+      </nav>
     )
   }
 
-    if(isBoardPage) {
+  if (isBoardPage) {
     return (
-          <header className="w-full border-b border-gray-200 bg-white dark:bg-gray-950 shadow-sm">
-    <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-      {/* Left section: Back + Divider + Logo + Title */}
-      <div className="flex items-center space-x-4">
-        {/* Back Button */}
-        <Link
-          href="/dashboard"
-          className="flex items-center space-x-1 text-sm text-gray-600 hover:text-black transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span className="hidden sm:inline">Back to dashboard</span>
-        </Link>
+      <header className="w-full border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 py-3 sm:py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          {/* Left Section */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+            {/* Back Button */}
+            <Link
+              href="/dashboard"
+              className="flex items-center gap-1 text-sm text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span className="hidden sm:inline">Back to dashboard</span>
+            </Link>
 
-        {/* Divider */}
-        <div className="h-4 sm:h-6 w-px bg-gray-300" />
+            {/* Divider */}
+            <div className="hidden sm:block h-6 w-px bg-gray-300 dark:bg-gray-700" />
 
-        {/* Logo + Board Title */}
-        <div className="flex items-center space-x-3">
-          <Image src="/taskify.png" alt="Taskify Logo" width={36} height={36} />
-          <div className="flex items-center space-x-2">
-            <span className="font-semibold text-lg text-gray-900 dark:text-white">
-              {boardTitle}
-            </span>
-            {onEditBoard && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="p-1"
-                onClick={onEditBoard}
-              >
-                <MoreHorizontal className="w-4 h-4 text-gray-500 hover:text-black transition" />
-              </Button>
-            )}
+            {/* Logo + Board Title */}
+            <div className="flex items-center gap-3">
+              <Image src="/taskify.png" alt="Taskify Logo" width={36} height={36} />
+              <div className="flex items-center gap-1">
+                <span className="font-semibold text-lg text-gray-900 dark:text-white truncate max-w-[140px] sm:max-w-xs">
+                  {boardTitle}
+                </span>
+                {onEditBoard && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="p-1"
+                    onClick={onEditBoard}
+                  >
+                    <MoreHorizontal className="w-4 h-4 text-gray-500 hover:text-black dark:hover:text-white transition" />
+                  </Button>
+                )}
+              </div>
+            </div>
           </div>
+
+          {/* Filter Button */}
+          {onFilterClick && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all w-full sm:w-auto"
+              onClick={onFilterClick}
+            >
+              <Filter className="w-4 h-4" />
+              <span>Filter</span>
+              {filterCount > 0 && (
+                <Badge
+                  variant="secondary"
+                  className="ml-1 px-2 py-0.5 text-xs rounded-full"
+                >
+                  {filterCount}
+                </Badge>
+              )}
+            </Button>
+          )}
         </div>
-      </div>
-    </div>
-  </header>
+      </header>
     )
-    }
+  }
 
   return (
-    <nav className="bg-white shadow-sm w-full">
-      <div className="max-w-screen-xl mx-auto flex items-center justify-between px-4 sm:px-6 py-4">
-        {/* Logo & Title */}
-        <div className="flex items-center">
-          <Image src="/taskify.png" alt="Taskify Logo" width={40} height={40} />
-          <span className="text-xl sm:text-2xl font-bold text-[#062a4d]">Taskify</span>
+    <nav className="bg-white dark:bg-gray-950 shadow-sm w-full">
+      <div className="max-w-screen-xl mx-auto flex flex-wrap items-center justify-between px-4 sm:px-6 py-3 gap-2">
+        {/* Logo */}
+        <div className="flex items-center gap-2">
+          <Image src="/taskify.png" alt="Taskify Logo" width={36} height={36} />
+          <span className="text-lg sm:text-2xl font-bold text-[#062a4d]">
+            Taskify
+          </span>
         </div>
+
         {/* Right-side */}
-        <div className="flex items-center space-x-3">
+        <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2 sm:gap-3">
           {isSignedIn ? (
             <>
-              <span className="hidden sm:inline text-sm text-gray-600">
+              <span className="text-sm text-gray-600 dark:text-gray-300 hidden sm:inline">
                 Welcome, {user.firstName ?? user.emailAddresses[0].emailAddress}
               </span>
               <Link href="/dashboard">
@@ -119,5 +157,5 @@ export default function Navbar({boardTitle, onEditBoard}: Props) {
         </div>
       </div>
     </nav>
-  );
+  )
 }
