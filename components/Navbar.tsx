@@ -1,14 +1,19 @@
-// components/Navbar.tsx
 "use client";
 
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, MoreHorizontal } from "lucide-react";
 import { usePathname } from "next/navigation";
 
-export default function Navbar() {
+interface Props {
+  boardTitle?: string;
+  onEditBoard?: () => void;
+
+}
+
+export default function Navbar({boardTitle, onEditBoard}: Props) {
   const { isSignedIn, user } = useUser();
   const pathname = usePathname()
 
@@ -32,6 +37,49 @@ export default function Navbar() {
     </nav>
     )
   }
+
+    if(isBoardPage) {
+    return (
+          <header className="w-full border-b border-gray-200 bg-white dark:bg-gray-950 shadow-sm">
+    <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      {/* Left section: Back + Divider + Logo + Title */}
+      <div className="flex items-center space-x-4">
+        {/* Back Button */}
+        <Link
+          href="/dashboard"
+          className="flex items-center space-x-1 text-sm text-gray-600 hover:text-black transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span className="hidden sm:inline">Back to dashboard</span>
+        </Link>
+
+        {/* Divider */}
+        <div className="h-4 sm:h-6 w-px bg-gray-300" />
+
+        {/* Logo + Board Title */}
+        <div className="flex items-center space-x-3">
+          <Image src="/taskify.png" alt="Taskify Logo" width={36} height={36} />
+          <div className="flex items-center space-x-2">
+            <span className="font-semibold text-lg text-gray-900 dark:text-white">
+              {boardTitle}
+            </span>
+            {onEditBoard && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="p-1"
+                onClick={onEditBoard}
+              >
+                <MoreHorizontal className="w-4 h-4 text-gray-500 hover:text-black transition" />
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+    )
+    }
 
   return (
     <nav className="bg-white shadow-sm w-full">
