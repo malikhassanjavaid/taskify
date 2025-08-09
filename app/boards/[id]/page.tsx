@@ -381,7 +381,7 @@ export default function BoardPage() {
         </DialogContent>
       </Dialog>
 
-      <main className="max-w-4xl mx-auto p-6 space-y-6">
+      <main className="max-w-7xl mx-auto p-6 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="text-xl font-semibold">
             <span>Total Tasks: </span>
@@ -458,17 +458,36 @@ export default function BoardPage() {
 
         {/* Board Column */}
 
-        <div>
-          {columns.map((column, key) => (
-            <Column key={key} column={column} onCreateTask={handleCreateTask} onEditColumn={() => {}}>
-              <div>
-                {column.tasks.map((task, key) => (
-                    <Task task={task} key={key}/>
-                ))}
-              </div>
-            </Column>
-          ))}
-        </div>
+        <div
+  className="flex flex-col lg:flex-row lg:space-x-6 lg:overflow-x-auto
+             lg:pb-6 lg:px-4 lg:-mx-4
+             bg-gradient-to-b from-gray-50 via-white to-gray-50
+             dark:from-gray-900 dark:via-gray-950 dark:to-gray-900
+             rounded-xl border border-gray-200 dark:border-gray-800
+             shadow-inner p-4
+             lg:[&::-webkit-scrollbar]:h-2
+             lg:[&::-webkit-scrollbar-track]:bg-gray-200 dark:lg:[&::-webkit-scrollbar-track]:bg-gray-800
+             lg:[&::-webkit-scrollbar-thumb]:bg-gradient-to-r lg:[&::-webkit-scrollbar-thumb]:from-blue-400 lg:[&::-webkit-scrollbar-thumb]:to-purple-500
+             lg:[&::-webkit-scrollbar-thumb]:rounded-full
+             transition-all duration-300 ease-in-out
+             space-y-4 lg:space-y-0"
+>
+  {columns.map((column, key) => (
+    <Column
+      key={key}
+      column={column}
+      onCreateTask={handleCreateTask}
+      onEditColumn={() => {}}
+    >
+      <div className="space-y-3">
+        {column.tasks.map((task, key) => (
+          <Task task={task} key={key} />
+        ))}
+      </div>
+    </Column>
+  ))}
+</div>
+
       </main>
     </div>
   )
