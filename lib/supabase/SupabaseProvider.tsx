@@ -21,19 +21,44 @@ export default function SupabaseProvider({
     const [supabase, setSupabase] = useState<SupabaseClient | null>(null)
     const [isLoaded, setIsLoaded] = useState<boolean>(false)
 
-    useEffect(() => {
-        if(!session) return;
-        const client = createClient(
-              process.env.NEXT_PUBLIC_SUPABASE_URL!,
-              process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+   useEffect(() => {
+  const setup = async () => {
+    try {
+      const token = await session?.getToken(); 
+
+      const client = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
         {
-         accessToken: async () => session?.getToken() ?? null,
+          global: {
+            headers: {
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+          },
         }
-        )
-        setSupabase(client)
-        setIsLoaded(true)
-    }, [session])
-   return <Context.Provider value={{supabase, isLoaded}}>{!isLoaded ? <div>Loading...</div> : children}</Context.Provider>
+      );
+
+      setSupabase(client);
+      setIsLoaded(true);
+    } catch (err) {
+      console.error("❌ Supabase init error:", err);
+    }
+  };
+
+  setup();
+}, [session]);
+
+
+
+   return <Context.Provider value={{supabase, isLoaded}}>
+    {!isLoaded ? (
+  <div className="flex items-center justify-center min-h-screen text-gray-500">
+    Connecting to Supabase...
+  </div>
+) : (
+  children
+)}
+   </Context.Provider>
 
 }
 

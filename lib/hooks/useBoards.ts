@@ -1,8 +1,8 @@
 "use client"
 import { useUser } from "@clerk/nextjs"
 import { useEffect, useState } from "react"
-import { Board, Column } from "../supabase/model"
-import { boardDataService, boardService } from "../services"
+import { Board, Column, ColumnWithTasks } from "../supabase/model"
+import { boardDataService, boardService, taskService } from "../services"
 import { useSupabase } from "../supabase/SupabaseProvider"
 
 export function useBoards() {
@@ -63,7 +63,7 @@ export function useBoards() {
 export function useBoard(boardId: string) {
     const {supabase} = useSupabase()
     const [board, setBoard] = useState<Board | null>(null)
-    const [columns, setColumns] = useState<Column[]>([])
+    const [columns, setColumns] = useState<ColumnWithTasks[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
@@ -82,7 +82,7 @@ export function useBoard(boardId: string) {
           setError(null)
           const data = await boardDataService.getBoardwithColumns(supabase!, boardId)
           setBoard(data.board)
-          setColumns(data.columns)
+          setColumns(data.columnsWithTasks)
         } catch (err) {
            setError(err instanceof Error ? err.message: "Failed to load boards")
         } finally {
@@ -101,5 +101,33 @@ export function useBoard(boardId: string) {
         }
     }
 
-     return {board, columns, loading, error ,updateBoard}
+    async function createRealTask(
+        columnId: string,
+        taskData: {
+          title: string;
+          description?: string;
+          assignee?: string;
+          due_date?: string;
+          priority: "low" | "medium" | "high";
+        } 
+    ) {
+        try {
+            const newTask = await taskService.createTask(supabase!, {
+               title: taskData.title,
+               description: taskData.description || null,
+               assignee: taskData.assignee || null,
+               due_date: taskData.due_date || null,
+               column_id: columnId,
+               sort_order: columns.find(col => col.id === columnId)?.tasks.length || 0,
+               priority: taskData.priority || "medium",
+
+            })
+            setColumns((prev) => prev.map((col) => col.id === columnId ? {...col, tasks: [...col.tasks, newTask]}: col))
+            return newTask;
+        } catch(err) {
+            setError(err instanceof Error ? err.message: "Failed to create the task.")
+        }
+        }
+
+     return {board, columns, loading, error ,updateBoard, createRealTask}
 }
