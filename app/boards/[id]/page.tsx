@@ -66,7 +66,8 @@ function DropableColumn({
       size="icon"
       className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
     >
-      <MoreHorizontal className="h-5 w-5 text-gray-500" />
+      <MoreHorizontal className="h-5 w-5 text-gray-500" 
+      onClick={() => onEditColumn(column)}/>
     </Button>
   </div>
 
@@ -312,13 +313,23 @@ function TaskOverlay({task}: {task: Task}) {
 
 export default function BoardPage() {
   const { id } = useParams<{ id: string }>()
-  const { board, updateBoard, columns, createRealTask, setColumns, moveTask} = useBoard(id)
+  const { board, updateBoard, createColumn, updateColumn, columns, createRealTask, setColumns, moveTask} = useBoard(id)
 
   const [isEditingTitle, setIsEditingTitle] = useState(false)
   const [newTitle, setNewTitle] = useState("")
   const [newColor, setNewColor] = useState("")
   const [isFilterOpen, setIsFilterOpen] = useState(false)
+
+  const [isCreatingColumn, setIsCreatingColumn] = useState(false)
+  const [isEditingColumn, setIsEditingColumn] = useState(false)
+  const [newColumnTitle, setNewColumnTitle] = useState("")
+
+ const [editingColumnTitle, setEditingColumnTitle] = useState("")
+ const [editingColumn, setEditingColumn] = useState<ColumnWithTasks | null>(null)
+
   const [activeTask, setActiveTask] = useState<Task | null>(null)
+
+
   const sensors = useSensors(useSensor(
     PointerSensor, {
       activationConstraint: {
@@ -471,7 +482,40 @@ export default function BoardPage() {
          }
       }
   }
+
+  async function handleCreateColumn(e: React.FormEvent) {
+    e.preventDefault()
+
+    if(!newColumnTitle.trim()) return;
+
+    await createColumn(newColumnTitle.trim()) 
+
+    setNewColumnTitle("")
+    setIsCreatingColumn(false)
+  }
+
+    async function handleUpdateColumn(e: React.FormEvent) {
+    e.preventDefault()
+
+    if(!editingColumnTitle.trim() || !editingColumn) return;
+
+    await updateColumn(editingColumn.id, editingColumnTitle.trim())
+
+    setEditingColumnTitle("")
+    setIsEditingColumn(false)
+    setEditingColumn(null)
+
+  }
+
+  function handleEditColumn(column: ColumnWithTasks) {
+
+    setIsEditingColumn(true)
+    setEditingColumn(column)
+    setEditingColumnTitle(column.title)
+  }
+
   return (
+    <>
     <div className="min-h-screen bg-gray-50 dark:bg-neutral-900">
       <Navbar
         boardTitle={board?.title}
@@ -647,54 +691,177 @@ export default function BoardPage() {
           </Dialog>
         </div>
 
-        {/* Board Column */}
-      <DndContext 
-        sensors={sensors}
-        collisionDetection={rectIntersection}
-        onDragStart={handleDragStart}
-        onDragOver={handleDragOver}
-        onDragEnd={handleDragEnd}
-        >
-        <div
-  className="flex flex-col lg:flex-row lg:space-x-6 lg:overflow-x-auto
-             lg:pb-6 lg:px-4 lg:-mx-4
-             bg-gradient-to-b from-gray-50 via-white to-gray-50
-             dark:from-gray-900 dark:via-gray-950 dark:to-gray-900
-             rounded-xl border border-gray-200 dark:border-gray-800
-             shadow-inner p-4
-             lg:[&::-webkit-scrollbar]:h-2
-             lg:[&::-webkit-scrollbar-track]:bg-gray-200 dark:lg:[&::-webkit-scrollbar-track]:bg-gray-800
-             lg:[&::-webkit-scrollbar-thumb]:bg-gradient-to-r lg:[&::-webkit-scrollbar-thumb]:from-blue-400 lg:[&::-webkit-scrollbar-thumb]:to-purple-500
-             lg:[&::-webkit-scrollbar-thumb]:rounded-full
-             transition-all duration-300 ease-in-out
-             space-y-4 lg:space-y-0"
+{/* Board Column */}
+<DndContext
+  sensors={sensors}
+  collisionDetection={rectIntersection}
+  onDragStart={handleDragStart}
+  onDragOver={handleDragOver}
+  onDragEnd={handleDragEnd}
 >
-  {columns.map((column, key) => (
-    <DropableColumn
-      key={key}
-      column={column}
-      onCreateTask={handleCreateTask}
-      onEditColumn={() => {}}
-    >
-      <SortableContext 
-         items={column.tasks.map((task) => task.id)}
-         strategy={verticalListSortingStrategy}
+  <div
+    className="flex flex-col lg:flex-row lg:space-x-6 lg:overflow-x-auto
+               lg:pb-6 lg:px-4 lg:-mx-4
+               bg-gradient-to-br from-gray-50 via-white to-gray-100
+               dark:from-gray-900 dark:via-gray-950 dark:to-gray-900
+               rounded-2xl border border-gray-200 dark:border-gray-800
+               shadow-xl p-6
+               lg:[&::-webkit-scrollbar]:h-2
+               lg:[&::-webkit-scrollbar-track]:bg-gray-200 dark:lg:[&::-webkit-scrollbar-track]:bg-gray-800
+               lg:[&::-webkit-scrollbar-thumb]:bg-gradient-to-r lg:[&::-webkit-scrollbar-thumb]:from-indigo-400 lg:[&::-webkit-scrollbar-thumb]:to-pink-500
+               lg:[&::-webkit-scrollbar-thumb]:rounded-full
+               transition-all duration-300 ease-in-out
+               space-y-6 lg:space-y-0"
+  >
+    {columns.map((column, key) => (
+      <DropableColumn
+        key={key}
+        column={column}
+        onCreateTask={handleCreateTask}
+        onEditColumn={handleEditColumn}
+      >
+        <SortableContext
+          items={column.tasks.map((task) => task.id)}
+          strategy={verticalListSortingStrategy}
         >
-      <div className="space-y-3">
-        {column.tasks.map((task, key) => (
-          <SortableTask task={task} key={key} />
-        ))}
-      </div>
-      </SortableContext>
-    </DropableColumn>
-  ))}
+          <div className="space-y-3">
+            {column.tasks.map((task, key) => (
+              <SortableTask task={task} key={key} />
+            ))}
+          </div>
+        </SortableContext>
+      </DropableColumn>
+    ))}
 
-  <DragOverlay>
-    {activeTask ? <TaskOverlay task={activeTask}/> : null}
-  </DragOverlay>
-</div>
+    {/* Add Column Button */}
+  <button
+  onClick={() => setIsCreatingColumn(true)}
+  className="min-w-[250px] h-fit px-3 py-3 rounded-lg
+             bg-gray-100 dark:bg-gray-700/60
+             hover:bg-gray-200 dark:hover:bg-gray-600
+             text-gray-700 dark:text-gray-200
+             cursor-pointer flex items-center gap-2 font-medium
+             transition-colors duration-200 focus:outline-none
+             focus:ring-2 focus:ring-indigo-400"
+>
+  <Plus className="w-4 h-4" />
+  Add another list
+</button>
+
+    <DragOverlay>
+      {activeTask ? <TaskOverlay task={activeTask} /> : null}
+    </DragOverlay>
+  </div>
 </DndContext>
       </main>
     </div>
+
+   {/* Create Column Dialog */}
+<Dialog open={isCreatingColumn} onOpenChange={setIsCreatingColumn}>
+  <DialogContent
+    className="bg-gradient-to-br from-white via-gray-50 to-gray-100 
+               dark:from-gray-900 dark:via-gray-950 dark:to-gray-900
+               p-6 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800
+               transition-all duration-300 ease-in-out"
+  >
+    <DialogHeader>
+      <DialogTitle className="text-2xl font-bold">
+        Create New Column
+      </DialogTitle>
+      <p className="text-gray-500 dark:text-gray-400">
+        Add a new column to organize your tasks more efficiently
+      </p>
+    </DialogHeader>
+
+    <form onSubmit={handleCreateColumn} className="space-y-5 mt-4">
+      <div>
+        <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          Column Title
+        </Label>
+        <Input
+          id="columnTitle"
+          value={newColumnTitle}
+          onChange={(e) => setNewColumnTitle(e.target.value)}
+          placeholder="Enter column title..."
+          required
+          className="mt-2 border-gray-300 dark:border-gray-700 rounded-lg shadow-sm 
+                     focus:border-indigo-500 focus:ring focus:ring-indigo-300 dark:focus:ring-indigo-500 
+                     transition-all duration-300"
+        />
+      </div>
+
+      <div className="flex justify-end space-x-3">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => setIsCreatingColumn(false)}
+        >
+          Cancel
+        </Button>
+        <Button
+          type="submit"
+          >
+          Create Column
+        </Button>
+      </div>
+    </form>
+  </DialogContent>
+</Dialog>
+
+<Dialog open={isEditingColumn} onOpenChange={setIsEditingColumn}>
+  <DialogContent
+    className="bg-gradient-to-br from-white via-gray-50 to-gray-100 
+               dark:from-gray-900 dark:via-gray-950 dark:to-gray-900
+               p-6 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800
+               transition-all duration-300 ease-in-out"
+  >
+    <DialogHeader>
+      <DialogTitle className="text-2xl font-bold">
+        Edit Column
+      </DialogTitle>
+      <p className="text-gray-500 dark:text-gray-400">
+        Update the title of your column
+      </p>
+    </DialogHeader>
+
+    <form onSubmit={handleUpdateColumn} className="space-y-5 mt-4">
+      <div>
+        <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          Column Title
+        </Label>
+        <Input
+          id="columnTitle"
+          value={editingColumnTitle}
+          onChange={(e) => setEditingColumnTitle(e.target.value)}
+          placeholder="Enter column title..."
+          required
+          className="mt-2 border-gray-300 dark:border-gray-700 rounded-lg shadow-sm 
+                     focus:border-indigo-500 focus:ring focus:ring-indigo-300 dark:focus:ring-indigo-500 
+                     transition-all duration-300"
+        />
+      </div>
+
+      <div className="flex justify-end space-x-3">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => {
+            setIsEditingColumn(false)
+            setEditingColumnTitle("")
+            setEditingColumn(null)
+          }}
+        >
+          Cancel
+        </Button>
+        <Button
+          type="submit"
+          >
+          Create Column
+        </Button>
+      </div>
+    </form>
+  </DialogContent>
+</Dialog>
+    </>
   )
 }
