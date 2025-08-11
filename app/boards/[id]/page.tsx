@@ -44,135 +44,141 @@ function DropableColumn({
     const { setNodeRef, isOver} = useDroppable({id: column.id})
 
     return (
-  <div 
-  ref={setNodeRef} 
-  className={`flex flex-col h-full p-4 bg-white dark:bg-gray-900 
-  rounded-xl shadow-md hover:shadow-lg transition-shadow 
-  duration-300 w-full max-w-full ${isOver ? "bg-blue-50 rounded-lg" : ""}`}>
-    
-    {/* Column Header */}
-    <div className="flex items-center justify-between border-b pb-3 mb-4">
-      <div className="flex items-center gap-3">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">
-          {column.title}
-        </h3>
-        <Badge variant="secondary" className="px-2 py-1 text-xs font-medium">
-          {column.tasks.length}
-        </Badge>
-      </div>
-      <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
-        <MoreHorizontal className="h-5 w-5 text-gray-500" />
-      </Button>
+  <div
+  ref={setNodeRef}
+  className={`flex flex-col h-full p-4 rounded-xl shadow-md w-full max-w-full transition-all duration-300
+    bg-white dark:bg-gray-900 
+    ${isOver ? "ring-4 ring-blue-400 shadow-lg scale-[1.02] bg-blue-50 dark:bg-gray-800" : "hover:shadow-lg"}
+  `}
+>
+  {/* Column Header */}
+  <div className="flex items-center justify-between border-b pb-3 mb-4">
+    <div className="flex items-center gap-3">
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">
+        {column.title}
+      </h3>
+      <Badge variant="secondary" className="px-2 py-1 text-xs font-medium">
+        {column.tasks.length}
+      </Badge>
     </div>
-
-    {/* Column Content */}
-    <div className="flex flex-col gap-4 flex-1">
-      {children}
-
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button
-            variant="outline"
-            className="flex items-center gap-2 text-sm font-medium border-dashed hover:border-solid transition-all"
-          >
-            <Plus className="h-4 w-4" />
-            Add Task
-          </Button>
-        </DialogTrigger>
-
-        <DialogContent className="sm:max-w-[500px] w-full rounded-xl">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-semibold">Create New Task</DialogTitle>
-            <p className="text-sm text-muted-foreground">Add a task to the board</p>
-          </DialogHeader>
-
-          <form className="space-y-5" onSubmit={onCreateTask}>
-            {/* Title */}
-            <div className="space-y-1">
-              <Label htmlFor="title">Title*</Label>
-              <Input
-                id="title"
-                name="title"
-                placeholder="Enter task title"
-                required
-                className="rounded-lg"
-              />
-            </div>
-
-            {/* Description */}
-            <div className="space-y-1">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                name="description"
-                placeholder="Enter task description"
-                rows={3}
-                className="rounded-lg"
-              />
-            </div>
-
-            {/* Assignee & Priority */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1 space-y-1">
-                <Label htmlFor="assignee">Assignee</Label>
-                <Input
-                  id="assignee"
-                  name="assignee"
-                  placeholder="Who should do this?"
-                  className="h-10 rounded-lg"
-                />
-              </div>
-
-              <div className="flex-1 space-y-1">
-                <Label htmlFor="priority">Priority</Label>
-                <Select name="priority" defaultValue="medium">
-                  <SelectTrigger className="h-10 w-full rounded-lg border border-gray-300 dark:border-gray-700 shadow-sm">
-                    <SelectValue placeholder="Select priority" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white dark:bg-gray-800 rounded-lg shadow-lg">
-                    {["low", "medium", "high"].map((priority, key) => (
-                      <SelectItem
-                        key={key}
-                        value={priority}
-                        className="capitalize text-sm px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-                      >
-                        {priority}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {/* Due Date */}
-            <div className="space-y-1">
-              <Label htmlFor="dueDate">Due Date</Label>
-              <Input
-                type="date"
-                id="dueDate"
-                name="dueDate"
-                className="rounded-lg"
-              />
-            </div>
-
-            {/* Submit */}
-            <div className="pt-2">
-              <Button
-                type="submit"
-                className="w-full rounded-lg shadow-sm hover:shadow-md transition"
-              >
-                Create Task
-              </Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
-    </div>
+    <Button
+      variant="ghost"
+      size="icon"
+      className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+    >
+      <MoreHorizontal className="h-5 w-5 text-gray-500" />
+    </Button>
   </div>
+
+  {/* Column Content */}
+  <div className="flex flex-col gap-4 flex-1">
+    {children}
+
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button
+          variant="outline"
+          className="flex items-center gap-2 text-sm font-medium border-dashed hover:border-solid transition-all"
+        >
+          <Plus className="h-4 w-4" />
+          Add Task
+        </Button>
+      </DialogTrigger>
+
+      <DialogContent className="sm:max-w-[500px] w-full rounded-xl">
+        <DialogHeader>
+          <DialogTitle className="text-xl font-semibold">Create New Task</DialogTitle>
+          <p className="text-sm text-muted-foreground">Add a task to the board</p>
+        </DialogHeader>
+
+        <form className="space-y-5" onSubmit={onCreateTask}>
+          {/* Title */}
+          <div className="space-y-1">
+            <Label htmlFor="title">Title*</Label>
+            <Input
+              id="title"
+              name="title"
+              placeholder="Enter task title"
+              required
+              className="rounded-lg"
+            />
+          </div>
+
+          {/* Description */}
+          <div className="space-y-1">
+            <Label htmlFor="description">Description</Label>
+            <Textarea
+              id="description"
+              name="description"
+              placeholder="Enter task description"
+              rows={3}
+              className="rounded-lg"
+            />
+          </div>
+
+          {/* Assignee & Priority */}
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1 space-y-1">
+              <Label htmlFor="assignee">Assignee</Label>
+              <Input
+                id="assignee"
+                name="assignee"
+                placeholder="Who should do this?"
+                className="h-10 rounded-lg"
+              />
+            </div>
+
+            <div className="flex-1 space-y-1">
+              <Label htmlFor="priority">Priority</Label>
+              <Select name="priority" defaultValue="medium">
+                <SelectTrigger className="h-10 w-full rounded-lg border border-gray-300 dark:border-gray-700 shadow-sm">
+                  <SelectValue placeholder="Select priority" />
+                </SelectTrigger>
+                <SelectContent className="bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+                  {["low", "medium", "high"].map((priority, key) => (
+                    <SelectItem
+                      key={key}
+                      value={priority}
+                      className="capitalize text-sm px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      {priority}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Due Date */}
+          <div className="space-y-1">
+            <Label htmlFor="dueDate">Due Date</Label>
+            <Input
+              type="date"
+              id="dueDate"
+              name="dueDate"
+              className="rounded-lg"
+            />
+          </div>
+
+          {/* Submit */}
+          <div className="pt-2">
+            <Button
+              type="submit"
+              className="w-full rounded-lg shadow-sm hover:shadow-md transition"
+            >
+              Create Task
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  </div>
+</div>
+
 )
 }
 
-function SortableTask({task}: {task: Task}) {
+function SortableTask({ task }: { task: Task }) {
   const {
     attributes,
     listeners,
@@ -180,67 +186,73 @@ function SortableTask({task}: {task: Task}) {
     transform,
     transition,
     isDragging,
-  } = useSortable({id: task.id})
-  
+  } = useSortable({ id: task.id });
+
   const styles = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1
-  }
+    opacity: isDragging ? 0.5 : 1,
+  };
 
   function getPriorityColor(priority: "low" | "medium" | "high"): string {
-    switch(priority) {
-      case "high": 
-      return "bg-red-500";
-      case "medium": 
-      return "bg-yellow-500"
-      case "low": 
-      return "bg-green-500"
-      default: 
-      return "bg-yellow-500"
+    switch (priority) {
+      case "high":
+        return "bg-red-500";
+      case "medium":
+        return "bg-yellow-500";
+      case "low":
+        return "bg-green-500";
+      default:
+        return "bg-yellow-500";
     }
   }
+
   return (
-  <div ref={setNodeRef} {...listeners} {...attributes} style={styles} className="w-full">
-    <Card className="rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 bg-white dark:bg-gray-900">
-      <CardContent className="p-5 flex flex-col gap-4">
-        
-        {/* Task Header */}
-        <div className="flex justify-between items-start">
-          <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100 break-words">
-            {task.title}
-          </h4>
-          <div
-            className={`w-3 h-3 rounded-full flex-shrink-0 mt-1 ${getPriorityColor(
-              task.priority
-            )}`}
-          />
-        </div>
+    <div
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      style={styles}
+      className="w-full cursor-grab active:cursor-grabbing"
+    >
+      <Card className="rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 bg-white dark:bg-gray-900">
+        <CardContent className="p-5 flex flex-col gap-4">
+          {/* Task Header */}
+          <div className="flex justify-between items-start">
+            <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100 break-words">
+              {task.title}
+            </h4>
+            <div
+              className={`w-3 h-3 rounded-full flex-shrink-0 mt-1 ${getPriorityColor(
+                task.priority
+              )}`}
+            />
+          </div>
 
-        {/* Task Description */}
-        <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
-          {task.description || "No description."}
-        </p>
+          {/* Task Description */}
+          <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+            {task.description || "No description."}
+          </p>
 
-        {/* Task Meta */}
-        <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
-          {task.assignee && (
-            <div className="flex items-center gap-2">
-              <User className="h-4 w-4 text-gray-400" />
-              <span className="truncate">{task.assignee}</span>
-            </div>
-          )}
-          {task.due_date && (
-            <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-gray-400" />
-              <span>{task.due_date}</span>
-            </div>
-          )}
-        </div>
-      </CardContent>
-    </Card>
-  </div>
- );
+          {/* Task Meta */}
+          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+            {task.assignee && (
+              <div className="flex items-center gap-2">
+                <User className="h-4 w-4 text-gray-400" />
+                <span className="truncate">{task.assignee}</span>
+              </div>
+            )}
+            {task.due_date && (
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-gray-400" />
+                <span>{task.due_date}</span>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
 }
 
 function TaskOverlay({task}: {task: Task}) {
@@ -424,18 +436,40 @@ export default function BoardPage() {
     const taskId = active.id as string;
     const overId = over.id as string;
 
-    const targetColumn = columns.find((col) => col.id === overId)
+    const targetColumn = columns.find((col) =>
+       col.id === overId)
 
     if(targetColumn) {
 
-      const sourceColumn = columns.find((col) => col.tasks.some((task) => task.id === taskId))
+      const sourceColumn = columns.find((col) =>
+         col.tasks.some((task) => task.id === taskId))
 
       if(sourceColumn && sourceColumn.id !== targetColumn.id) {
         await moveTask(taskId, targetColumn.id, targetColumn.tasks.length)
       }
-      else {}
     }
 
+     else {
+        // Check to see if were dropping on another task
+        const sourceColumn = columns.find((col) =>
+           col.tasks.some((task) => task.id === taskId))
+
+         const targetColumn = columns.find((col) =>
+           col.tasks.some((task) => task.id === overId))
+
+         if (sourceColumn && targetColumn) {
+
+          const oldIndex = sourceColumn.tasks.findIndex(
+            (task) => task.id === taskId)
+
+          const newIndex = sourceColumn.tasks.findIndex(
+            (task) => task.id === overId)
+
+          if (oldIndex !== newIndex) {
+            await moveTask(taskId, targetColumn.id, newIndex)
+          }
+         }
+      }
   }
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-neutral-900">
