@@ -65,9 +65,9 @@ function DropableColumn({
       variant="ghost"
       size="icon"
       className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+      onClick={() => onEditColumn(column)}
     >
-      <MoreHorizontal className="h-5 w-5 text-gray-500" 
-      onClick={() => onEditColumn(column)}/>
+      <MoreHorizontal className="h-5 w-5 text-gray-500"/>
     </Button>
   </div>
 
@@ -856,7 +856,7 @@ export default function BoardPage() {
         <Button
           type="submit"
           >
-          Create Column
+          Save changes
         </Button>
       </div>
     </form>
