@@ -327,6 +327,11 @@ export default function BoardPage() {
  const [editingColumnTitle, setEditingColumnTitle] = useState("")
  const [editingColumn, setEditingColumn] = useState<ColumnWithTasks | null>(null)
 
+ const [filters, setFilters] = useState({
+  priority: [] as string[],
+  dueDate: null as string | null
+ })
+
   const [activeTask, setActiveTask] = useState<Task | null>(null)
 
 
@@ -337,6 +342,24 @@ export default function BoardPage() {
       }
     }
   ))
+
+  function handleFilterChange(
+    type: "priority" | "dueDate",
+    value: string | string[] | null
+  ) {
+
+    setFilters((prev) => ({
+      ...prev, 
+      [type]: value
+    }))
+  }
+
+  function clearFilters() {
+     setFilters({
+       priority: [] as string[],
+       dueDate: null as string | null
+    })
+  }
 
   async function handleUpdateBoard(e: React.FormEvent) {
     e.preventDefault()
@@ -514,6 +537,32 @@ export default function BoardPage() {
     setEditingColumnTitle(column.title)
   }
 
+    const filteredColumns = columns.map((column) => ({
+      ...column,
+      tasks: column.tasks.filter((task) => {
+        // Filter by priority
+
+        if (
+          filters.priority.length > 0 && 
+          !filters.priority.includes(task.priority)
+        ) {
+          return false;
+        }
+
+        // Filter by due date
+
+        if (filters.dueDate && task.due_date) {
+          const taskDate = new Date(task.due_date).toDateString();
+          const filterDate = new Date(filters.dueDate).toDateString()
+
+          if (taskDate !== filterDate) {
+            return false;
+          }
+        }
+        return true;
+      })
+    }))
+
   return (
     <>
     <div className="min-h-screen bg-gray-50 dark:bg-neutral-900">
@@ -525,7 +574,11 @@ export default function BoardPage() {
           setIsEditingTitle(true)
         }}
         onFilterClick={() => setIsFilterOpen(true)}
-        filterCount={2}
+        filterCount={Object.values(filters).reduce(
+          (count, v) => 
+            count + (Array.isArray(v) ? v.length : v !== null ? 1 : 0),
+          0
+        )}
       />
 
       <Dialog open={isEditingTitle} onOpenChange={setIsEditingTitle}>
@@ -578,7 +631,7 @@ export default function BoardPage() {
           <DialogHeader>
             <DialogTitle className="text-xl sm:text-2xl font-semibold">Filter Tasks</DialogTitle>
             <p className="text-sm text-muted-foreground mt-1">
-              Filter tasks by priority, assignee, or due date
+              Filter tasks by priority and due date
             </p>
           </DialogHeader>
 
@@ -588,9 +641,18 @@ export default function BoardPage() {
               <div className="flex flex-wrap gap-2">
                 {["low", "medium", "high"].map((priority, key) => (
                   <Button
+                    onClick={() => {
+                      const newPriorites = filters.priority.includes(
+                        priority
+                      )
+                       ? (filters.priority.filter((p) => p !== priority))
+                       : [...filters.priority, priority]
+
+                       handleFilterChange("priority", newPriorites)
+                    }}
                     key={key}
                     type="button"
-                    variant="outline"
+                    variant={filters.priority.includes(priority) ? "default" : "outline"}
                     className="capitalize px-4 py-1.5 text-sm"
                   >
                     {priority}
@@ -601,11 +663,16 @@ export default function BoardPage() {
 
             <div className="space-y-2">
               <Label>Due Date</Label>
-              <Input type="date" className="w-full" />
+              <Input
+              value={filters.dueDate || ""}
+              onChange={(e) =>
+                 handleFilterChange("dueDate", e.target.value || null)}
+              
+              type="date" className="w-full" />
             </div>
 
             <div className="flex flex-col-reverse sm:flex-row justify-between gap-3 pt-4">
-              <Button type="button" variant="outline" className="w-full sm:w-auto">
+              <Button onClick={clearFilters} type="button" variant="outline" className="w-full sm:w-auto">
                 Clear Filter
               </Button>
               <Button type="button" className="w-full sm:w-auto" onClick={() => setIsFilterOpen(false)}>
@@ -713,7 +780,7 @@ export default function BoardPage() {
                transition-all duration-300 ease-in-out
                space-y-6 lg:space-y-0"
   >
-    {columns.map((column, key) => (
+    {filteredColumns.map((column, key) => (
       <DropableColumn
         key={key}
         column={column}
