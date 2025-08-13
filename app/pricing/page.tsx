@@ -11,7 +11,7 @@ export default function PricingPage() {
       <main className="flex flex-col items-center px-6 py-12">
         {/* Header */}
         <div className="text-center max-w-2xl mb-10">
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
+          <h1 className="text-4xl font-bold tracking-tight text-[#062a4d] dark:text-white">
             Choose Your Plan
           </h1>
           <p className="mt-2 text-lg text-gray-600 dark:text-gray-300">

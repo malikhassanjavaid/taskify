@@ -23,7 +23,7 @@ import { useBoard } from "@/lib/hooks/useBoards"
 import { ColumnWithTasks, Task } from "@/lib/supabase/model"
 import { DialogTrigger } from "@radix-ui/react-dialog"
 import { SelectContent } from "@radix-ui/react-select"
-import { Calendar, MoreHorizontal, Plus, User } from "lucide-react"
+import { Calendar, MoreHorizontal, Plus, User, Clock, AlertCircle, CheckCircle2, Target } from "lucide-react"
 import { useParams } from "next/navigation"
 import { useState } from "react"
 import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, PointerSensor, rectIntersection, useDroppable, useSensor, useSensors } from "@dnd-kit/core"
@@ -46,101 +46,101 @@ function DropableColumn({
     return (
   <div
   ref={setNodeRef}
-  className={`flex flex-col h-full p-4 rounded-xl shadow-md w-full max-w-full transition-all duration-300
-    bg-white dark:bg-gray-900 
-    ${isOver ? "ring-4 ring-blue-400 shadow-lg scale-[1.02] bg-blue-50 dark:bg-gray-800" : "hover:shadow-lg"}
+  className={`flex flex-col h-full p-4 sm:p-6 rounded-2xl w-full min-w-[280px] sm:min-w-[320px] max-w-full transition-all duration-300 backdrop-blur-sm border-2
+    bg-card/80 border-border/50
+    ${isOver ? "ring-2 ring-[#062a4d]/50 shadow-2xl scale-[1.02] bg-[#062a4d]/5 border-[#062a4d]/30" : "hover:shadow-xl hover:bg-card/90"}
   `}
 >
   {/* Column Header */}
-  <div className="flex items-center justify-between border-b pb-3 mb-4">
+  <div className="flex items-center justify-between pb-4 mb-4 border-b border-border/50">
     <div className="flex items-center gap-3">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">
+      <h3 className="text-lg sm:text-xl font-bold text-foreground truncate">
         {column.title}
       </h3>
-      <Badge variant="secondary" className="px-2 py-1 text-xs font-medium">
+      <Badge variant="secondary" className="px-3 py-1 text-xs font-semibold bg-[#062a4d]/10 text-[#062a4d] border border-[#062a4d]/20">
         {column.tasks.length}
       </Badge>
     </div>
     <Button
       variant="ghost"
-      size="icon"
-      className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+      size="sm"
+      className="rounded-xl hover:bg-muted transition-all duration-200 hover:scale-105"
       onClick={() => onEditColumn(column)}
     >
-      <MoreHorizontal className="h-5 w-5 text-gray-500"/>
+      <MoreHorizontal className="h-4 w-4 text-muted-foreground hover:text-foreground"/>
     </Button>
   </div>
 
   {/* Column Content */}
-  <div className="flex flex-col gap-4 flex-1">
+  <div className="flex flex-col gap-3 sm:gap-4 flex-1">
     {children}
 
     <Dialog>
       <DialogTrigger asChild>
         <Button
           variant="outline"
-          className="flex items-center gap-2 text-sm font-medium border-dashed hover:border-solid transition-all"
+          className="flex items-center gap-2 text-sm font-medium border-2 border-dashed border-border hover:border-[#062a4d]/50 hover:bg-[#062a4d]/5 transition-all duration-200 rounded-xl py-3"
         >
           <Plus className="h-4 w-4" />
           Add Task
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[500px] w-full rounded-xl">
+      <DialogContent className="sm:max-w-[500px] w-full rounded-2xl bg-background border-border">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold">Create New Task</DialogTitle>
-          <p className="text-sm text-muted-foreground">Add a task to the board</p>
+          <DialogTitle className="text-2xl font-bold text-foreground">Create New Task</DialogTitle>
+          <p className="text-sm text-muted-foreground">Add a task to organize your workflow</p>
         </DialogHeader>
 
-        <form className="space-y-5" onSubmit={onCreateTask}>
+        <form className="space-y-6" onSubmit={onCreateTask}>
           {/* Title */}
-          <div className="space-y-1">
-            <Label htmlFor="title">Title*</Label>
+          <div className="space-y-2">
+            <Label htmlFor="title" className="text-sm font-semibold text-foreground">Title*</Label>
             <Input
               id="title"
               name="title"
               placeholder="Enter task title"
               required
-              className="rounded-lg"
+              className="rounded-xl bg-background border-border focus:border-[#062a4d] focus:ring-[#062a4d]/20"
             />
           </div>
 
           {/* Description */}
-          <div className="space-y-1">
-            <Label htmlFor="description">Description</Label>
+          <div className="space-y-2">
+            <Label htmlFor="description" className="text-sm font-semibold text-foreground">Description</Label>
             <Textarea
               id="description"
               name="description"
               placeholder="Enter task description"
               rows={3}
-              className="rounded-lg"
+              className="rounded-xl bg-background border-border focus:border-[#062a4d] focus:ring-[#062a4d]/20"
             />
           </div>
 
           {/* Assignee & Priority */}
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1 space-y-1">
-              <Label htmlFor="assignee">Assignee</Label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="assignee" className="text-sm font-semibold text-foreground">Assignee</Label>
               <Input
                 id="assignee"
                 name="assignee"
                 placeholder="Who should do this?"
-                className="h-10 rounded-lg"
+                className="rounded-xl bg-background border-border focus:border-[#062a4d] focus:ring-[#062a4d]/20"
               />
             </div>
 
-            <div className="flex-1 space-y-1">
-              <Label htmlFor="priority">Priority</Label>
+            <div className="space-y-2">
+              <Label htmlFor="priority" className="text-sm font-semibold text-foreground">Priority</Label>
               <Select name="priority" defaultValue="medium">
-                <SelectTrigger className="h-10 w-full rounded-lg border border-gray-300 dark:border-gray-700 shadow-sm">
+                <SelectTrigger className="rounded-xl bg-background border-border focus:border-[#062a4d] focus:ring-[#062a4d]/20">
                   <SelectValue placeholder="Select priority" />
                 </SelectTrigger>
-                <SelectContent className="bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+                <SelectContent className="bg-background border-border rounded-xl shadow-2xl">
                   {["low", "medium", "high"].map((priority, key) => (
                     <SelectItem
                       key={key}
                       value={priority}
-                      className="capitalize text-sm px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      className="capitalize text-sm px-4 py-3 hover:bg-muted focus:bg-muted rounded-lg m-1"
                     >
                       {priority}
                     </SelectItem>
@@ -151,13 +151,13 @@ function DropableColumn({
           </div>
 
           {/* Due Date */}
-          <div className="space-y-1">
-            <Label htmlFor="dueDate">Due Date</Label>
+          <div className="space-y-2">
+            <Label htmlFor="dueDate" className="text-sm font-semibold text-foreground">Due Date</Label>
             <Input
               type="date"
               id="dueDate"
               name="dueDate"
-              className="rounded-lg"
+              className="rounded-xl bg-background border-border focus:border-[#062a4d] focus:ring-[#062a4d]/20"
             />
           </div>
 
@@ -165,7 +165,7 @@ function DropableColumn({
           <div className="pt-2">
             <Button
               type="submit"
-              className="w-full rounded-lg shadow-sm hover:shadow-md transition"
+              className="w-full rounded-xl bg-[#062a4d] hover:bg-[#062a4d]/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 py-3"
             >
               Create Task
             </Button>
@@ -192,21 +192,24 @@ function SortableTask({ task }: { task: Task }) {
   const styles = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0.6 : 1,
   };
 
-  function getPriorityColor(priority: "low" | "medium" | "high"): string {
+  function getPriorityConfig(priority: "low" | "medium" | "high"): { color: string; icon: any; bg: string } {
     switch (priority) {
       case "high":
-        return "bg-red-500";
+        return { color: "text-red-600 dark:text-red-400", icon: AlertCircle, bg: "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800/50" };
       case "medium":
-        return "bg-yellow-500";
+        return { color: "text-amber-600 dark:text-amber-400", icon: Clock, bg: "bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800/50" };
       case "low":
-        return "bg-green-500";
+        return { color: "text-emerald-600 dark:text-emerald-400", icon: CheckCircle2, bg: "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800/50" };
       default:
-        return "bg-yellow-500";
+        return { color: "text-amber-600 dark:text-amber-400", icon: Clock, bg: "bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800/50" };
     }
   }
+
+  const priorityConfig = getPriorityConfig(task.priority);
+  const PriorityIcon = priorityConfig.icon;
 
   return (
     <div
@@ -214,42 +217,44 @@ function SortableTask({ task }: { task: Task }) {
       {...listeners}
       {...attributes}
       style={styles}
-      className="w-full cursor-grab active:cursor-grabbing"
+      className="w-full cursor-grab active:cursor-grabbing group"
     >
-      <Card className="rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 bg-white dark:bg-gray-900">
-        <CardContent className="p-5 flex flex-col gap-4">
+      <Card className={`rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 backdrop-blur-sm border-2 bg-card/95 border-border/50 hover:border-[#062a4d]/30 hover:scale-[1.02] ${priorityConfig.bg}`}>
+        <CardContent className="p-4 sm:p-5 flex flex-col gap-4">
           {/* Task Header */}
-          <div className="flex justify-between items-start">
-            <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100 break-words">
+          <div className="flex justify-between items-start gap-3">
+            <h4 className="text-base sm:text-lg font-bold text-foreground break-words flex-1 group-hover:text-[#062a4d] transition-colors">
               {task.title}
             </h4>
-            <div
-              className={`w-3 h-3 rounded-full flex-shrink-0 mt-1 ${getPriorityColor(
-                task.priority
-              )}`}
-            />
+            <div className={`flex items-center gap-1 ${priorityConfig.color} flex-shrink-0`}>
+              <PriorityIcon className="h-4 w-4" />
+              <span className="text-xs font-semibold capitalize">{task.priority}</span>
+            </div>
           </div>
 
           {/* Task Description */}
-          <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
-            {task.description || "No description."}
-          </p>
+          {task.description && (
+            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3 border-l-4 border-[#062a4d]/20 pl-3">
+              {task.description}
+            </p>
+          )}
 
           {/* Task Meta */}
-          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
             {task.assignee && (
-              <div className="flex items-center gap-2">
-                <User className="h-4 w-4 text-gray-400" />
-                <span className="truncate">{task.assignee}</span>
+              <div className="flex items-center gap-2 px-2 py-1 bg-muted/50 rounded-lg">
+                <User className="h-3 w-3 text-muted-foreground" />
+                <span className="text-xs font-medium text-foreground truncate">{task.assignee}</span>
               </div>
             )}
             {task.due_date && (
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-gray-400" />
-                <span>{task.due_date}</span>
+              <div className="flex items-center gap-2 px-2 py-1 bg-muted/50 rounded-lg">
+                <Calendar className="h-3 w-3 text-muted-foreground" />
+                <span className="text-xs font-medium text-foreground">{new Date(task.due_date).toLocaleDateString()}</span>
               </div>
             )}
           </div>
+
         </CardContent>
       </Card>
     </div>
@@ -257,52 +262,55 @@ function SortableTask({ task }: { task: Task }) {
 }
 
 function TaskOverlay({task}: {task: Task}) {
-
-  function getPriorityColor(priority: "low" | "medium" | "high"): string {
-    switch(priority) {
-      case "high": 
-      return "bg-red-500";
-      case "medium": 
-      return "bg-yellow-500"
-      case "low": 
-      return "bg-green-500"
-      default: 
-      return "bg-yellow-500"
+  function getPriorityConfig(priority: "low" | "medium" | "high"): { color: string; icon: any; bg: string } {
+    switch (priority) {
+      case "high":
+        return { color: "text-red-600 dark:text-red-400", icon: AlertCircle, bg: "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800/50" };
+      case "medium":
+        return { color: "text-amber-600 dark:text-amber-400", icon: Clock, bg: "bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800/50" };
+      case "low":
+        return { color: "text-emerald-600 dark:text-emerald-400", icon: CheckCircle2, bg: "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800/50" };
+      default:
+        return { color: "text-amber-600 dark:text-amber-400", icon: Clock, bg: "bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800/50" };
     }
   }
+
+  const priorityConfig = getPriorityConfig(task.priority);
+  const PriorityIcon = priorityConfig.icon;
+
   return (
-    <Card className="rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 bg-white dark:bg-gray-900">
+    <Card className={`rounded-2xl shadow-2xl transition-shadow duration-300 backdrop-blur-sm border-2 bg-card/95 border-border/50 ${priorityConfig.bg} rotate-3 scale-105`}>
       <CardContent className="p-5 flex flex-col gap-4">
-        
         {/* Task Header */}
-        <div className="flex justify-between items-start">
-          <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100 break-words">
+        <div className="flex justify-between items-start gap-3">
+          <h4 className="text-lg font-bold text-foreground break-words flex-1">
             {task.title}
           </h4>
-          <div
-            className={`w-3 h-3 rounded-full flex-shrink-0 mt-1 ${getPriorityColor(
-              task.priority
-            )}`}
-          />
+          <div className={`flex items-center gap-1 ${priorityConfig.color} flex-shrink-0`}>
+            <PriorityIcon className="h-4 w-4" />
+            <span className="text-xs font-semibold capitalize">{task.priority}</span>
+          </div>
         </div>
 
         {/* Task Description */}
-        <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
-          {task.description || "No description."}
-        </p>
+        {task.description && (
+          <p className="text-sm text-muted-foreground leading-relaxed border-l-4 border-[#062a4d]/20 pl-3">
+            {task.description}
+          </p>
+        )}
 
         {/* Task Meta */}
-        <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+        <div className="flex flex-col gap-2">
           {task.assignee && (
-            <div className="flex items-center gap-2">
-              <User className="h-4 w-4 text-gray-400" />
-              <span className="truncate">{task.assignee}</span>
+            <div className="flex items-center gap-2 px-2 py-1 bg-muted/50 rounded-lg">
+              <User className="h-3 w-3 text-muted-foreground" />
+              <span className="text-xs font-medium text-foreground truncate">{task.assignee}</span>
             </div>
           )}
           {task.due_date && (
-            <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-gray-400" />
-              <span>{task.due_date}</span>
+            <div className="flex items-center gap-2 px-2 py-1 bg-muted/50 rounded-lg">
+              <Calendar className="h-3 w-3 text-muted-foreground" />
+              <span className="text-xs font-medium text-foreground">{new Date(task.due_date).toLocaleDateString()}</span>
             </div>
           )}
         </div>
@@ -565,7 +573,7 @@ export default function BoardPage() {
 
   return (
     <>
-    <div className="min-h-screen bg-gray-50 dark:bg-neutral-900">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       <Navbar
         boardTitle={board?.title}
         onEditBoard={() => {
@@ -582,33 +590,35 @@ export default function BoardPage() {
       />
 
       <Dialog open={isEditingTitle} onOpenChange={setIsEditingTitle}>
-        <DialogContent className="sm:max-w-lg w-full rounded-xl shadow-xl border p-6">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-semibold">Edit Board</DialogTitle>
+        <DialogContent className="sm:max-w-lg w-full rounded-2xl shadow-2xl border-border bg-background backdrop-blur-sm">
+          <DialogHeader className="pb-6 border-b border-border/50">
+            <DialogTitle className="text-2xl font-bold text-foreground">Edit Board</DialogTitle>
+            <p className="text-sm text-muted-foreground">Customize your board settings</p>
           </DialogHeader>
 
-          <form onSubmit={handleUpdateBoard} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="boardTitle">Board Title</Label>
+          <form onSubmit={handleUpdateBoard} className="space-y-6 pt-6">
+            <div className="space-y-3">
+              <Label htmlFor="boardTitle" className="text-sm font-semibold text-foreground">Board Title</Label>
               <Input
                 id="boardTitle"
                 value={newTitle}
                 onChange={(e) => setNewTitle(e.target.value)}
                 placeholder="Enter board title..."
                 required
+                className="rounded-xl bg-background border-border focus:border-[#062a4d] focus:ring-[#062a4d]/20"
               />
             </div>
 
-            <div className="space-y-2">
-              <Label>Board Color</Label>
-              <div className="flex flex-wrap items-center gap-3">
-                {["bg-blue-500","bg-pink-500","bg-green-500","bg-yellow-500","bg-red-500","bg-purple-500","bg-indigo-500","bg-orange-500","bg-teal-500","bg-gray-500"].map((color) => (
+            <div className="space-y-3">
+              <Label className="text-sm font-semibold text-foreground">Board Color</Label>
+              <div className="grid grid-cols-5 gap-3 p-4 bg-muted/30 rounded-xl">
+                {["bg-blue-500","bg-pink-500","bg-green-500","bg-yellow-500","bg-red-500","bg-purple-500","bg-indigo-500","bg-orange-500","bg-teal-500","bg-[#062a4d]"].map((color) => (
                   <button
                     key={color}
                     type="button"
                     aria-label={color}
-                    className={`w-8 h-8 rounded-full border-2 border-white transition-all transform hover:scale-110 ${color} ${
-                      color === newColor ? "ring-2 ring-offset-2 ring-black" : ""
+                    className={`w-10 h-10 rounded-2xl border-2 transition-all transform hover:scale-110 hover:shadow-lg ${color} ${
+                      color === newColor ? "ring-4 ring-[#062a4d]/30 border-[#062a4d] scale-110" : "border-border hover:border-[#062a4d]/50"
                     }`}
                     onClick={() => setNewColor(color)}
                   />
@@ -616,124 +626,186 @@ export default function BoardPage() {
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 pt-4">
-              <Button type="button" variant="outline" onClick={() => setIsEditingTitle(false)}>
+            <div className="flex justify-end gap-3 pt-6 border-t border-border/50">
+              <Button type="button" variant="outline" onClick={() => setIsEditingTitle(false)} className="rounded-xl">
                 Cancel
               </Button>
-              <Button type="submit">Save Changes</Button>
+              <Button type="submit" className="rounded-xl bg-[#062a4d] hover:bg-[#062a4d]/90 text-white">Save Changes</Button>
             </div>
           </form>
         </DialogContent>
       </Dialog>
 
       <Dialog open={isFilterOpen} onOpenChange={setIsFilterOpen}>
-        <DialogContent className="sm:max-w-md w-full rounded-xl border shadow-xl p-6">
-          <DialogHeader>
-            <DialogTitle className="text-xl sm:text-2xl font-semibold">Filter Tasks</DialogTitle>
-            <p className="text-sm text-muted-foreground mt-1">
-              Filter tasks by priority and due date
+        <DialogContent className="sm:max-w-md w-full rounded-2xl border-border bg-background shadow-2xl backdrop-blur-sm">
+          <DialogHeader className="pb-6 border-b border-border/50">
+            <DialogTitle className="text-2xl font-bold text-foreground flex items-center gap-2">
+              <div className="p-2 bg-[#062a4d]/10 rounded-xl">
+                <Target className="h-5 w-5 text-[#062a4d]" />
+              </div>
+              Filter Tasks
+            </DialogTitle>
+            <p className="text-sm text-muted-foreground">
+              Refine your view by priority and due date
             </p>
           </DialogHeader>
 
-          <div className="space-y-6 mt-4">
-            <div className="space-y-2">
-              <Label>Priority</Label>
-              <div className="flex flex-wrap gap-2">
-                {["low", "medium", "high"].map((priority, key) => (
-                  <Button
-                    onClick={() => {
-                      const newPriorites = filters.priority.includes(
-                        priority
-                      )
-                       ? (filters.priority.filter((p) => p !== priority))
-                       : [...filters.priority, priority]
-
-                       handleFilterChange("priority", newPriorites)
-                    }}
-                    key={key}
-                    type="button"
-                    variant={filters.priority.includes(priority) ? "default" : "outline"}
-                    className="capitalize px-4 py-1.5 text-sm"
-                  >
-                    {priority}
-                  </Button>
-                ))}
+          <div className="space-y-6 pt-6">
+            <div className="space-y-3">
+              <Label className="text-sm font-semibold text-foreground">Priority Level</Label>
+              <div className="grid grid-cols-3 gap-2">
+                {["low", "medium", "high"].map((priority, key) => {
+                  const isSelected = filters.priority.includes(priority);
+                  const priorityConfig = {
+                    low: { color: "border-emerald-500 bg-emerald-50 text-emerald-700 hover:bg-emerald-100", icon: CheckCircle2 },
+                    medium: { color: "border-amber-500 bg-amber-50 text-amber-700 hover:bg-amber-100", icon: Clock },
+                    high: { color: "border-red-500 bg-red-50 text-red-700 hover:bg-red-100", icon: AlertCircle }
+                  }[priority as "low" | "medium" | "high"];
+                  const IconComponent = priorityConfig.icon;
+                  
+                  return (
+                    <Button
+                      onClick={() => {
+                        const newPriorities = filters.priority.includes(priority)
+                         ? filters.priority.filter((p) => p !== priority)
+                         : [...filters.priority, priority];
+                         handleFilterChange("priority", newPriorities);
+                      }}
+                      key={key}
+                      type="button"
+                      variant="outline"
+                      className={`capitalize px-3 py-2 text-sm rounded-xl transition-all ${
+                        isSelected 
+                          ? `${priorityConfig.color} border-2` 
+                          : "hover:bg-muted border-border"
+                      }`}
+                    >
+                      <IconComponent className="h-3 w-3 mr-2" />
+                      {priority}
+                    </Button>
+                  );
+                })}
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label>Due Date</Label>
+            <div className="space-y-3">
+              <Label className="text-sm font-semibold text-foreground">Due Date</Label>
               <Input
-              value={filters.dueDate || ""}
-              onChange={(e) =>
-                 handleFilterChange("dueDate", e.target.value || null)}
-              
-              type="date" className="w-full" />
+                value={filters.dueDate || ""}
+                onChange={(e) => handleFilterChange("dueDate", e.target.value || null)}
+                type="date" 
+                className="w-full rounded-xl bg-background border-border focus:border-[#062a4d] focus:ring-[#062a4d]/20" 
+              />
             </div>
 
-            <div className="flex flex-col-reverse sm:flex-row justify-between gap-3 pt-4">
-              <Button onClick={clearFilters} type="button" variant="outline" className="w-full sm:w-auto">
-                Clear Filter
+            <div className="flex gap-3 pt-6 border-t border-border/50">
+              <Button 
+                onClick={clearFilters} 
+                type="button" 
+                variant="outline" 
+                className="flex-1 rounded-xl"
+              >
+                Clear Filters
               </Button>
-              <Button type="button" className="w-full sm:w-auto" onClick={() => setIsFilterOpen(false)}>
-                Apply Filter
+              <Button 
+                type="button" 
+                className="flex-1 rounded-xl bg-[#062a4d] hover:bg-[#062a4d]/90 text-white" 
+                onClick={() => setIsFilterOpen(false)}
+              >
+                Apply Filters
               </Button>
             </div>
           </div>
         </DialogContent>
       </Dialog>
 
-      <main className="max-w-7xl mx-auto p-6 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="text-xl font-semibold">
-            <span>Total Tasks: </span>
-            <span className="text-primary">
-              {columns.reduce((sum, col) => sum + col.tasks.length, 0)}
-            </span>
+      <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 bg-card/50 backdrop-blur-sm rounded-2xl border border-border/50 shadow-lg">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-[#062a4d]/10 rounded-2xl">
+                <Target className="h-6 w-6 text-[#062a4d]" />
+              </div>
+              <div>
+                <h2 className="text-xl sm:text-2xl font-bold text-foreground">Board Overview</h2>
+                <p className="text-sm text-muted-foreground">Manage your tasks efficiently</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              <div className="px-4 py-2 bg-muted/50 rounded-xl">
+                <span className="text-sm font-medium text-muted-foreground">Total Tasks</span>
+                <div className="text-2xl font-bold text-[#062a4d]">
+                  {columns.reduce((sum, col) => sum + col.tasks.length, 0)}
+                </div>
+              </div>
+              <div className="px-4 py-2 bg-muted/50 rounded-xl">
+                <span className="text-sm font-medium text-muted-foreground">Columns</span>
+                <div className="text-2xl font-bold text-foreground">{columns.length}</div>
+              </div>
+            </div>
           </div>
 
           <Dialog>
             <DialogTrigger asChild>
-              <Button className="flex items-center gap-2">
-                <Plus className="h-4 w-4" />
+              <Button className="bg-[#062a4d] hover:bg-[#062a4d]/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 rounded-xl px-6 py-3">
+                <Plus className="h-4 w-4 mr-2" />
                 Add Task
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px] w-full">
+            <DialogContent className="sm:max-w-[500px] w-full rounded-2xl bg-background border-border">
               <DialogHeader>
-                <DialogTitle>Create New Task</DialogTitle>
-                <p className="text-sm text-muted-foreground">Add a task to the board</p>
+                <DialogTitle className="text-2xl font-bold text-foreground">Create New Task</DialogTitle>
+                <p className="text-sm text-muted-foreground">Add a task to organize your workflow</p>
               </DialogHeader>
 
-              <form className="space-y-4" onSubmit={handleCreateTask}>
-                <div className="space-y-1">
-                  <Label htmlFor="title">Title*</Label>
-                  <Input id="title" name="title" placeholder="Enter task title" required />
+              <form className="space-y-6" onSubmit={handleCreateTask}>
+                <div className="space-y-2">
+                  <Label htmlFor="title" className="text-sm font-semibold text-foreground">Title*</Label>
+                  <Input 
+                    id="title" 
+                    name="title" 
+                    placeholder="Enter task title" 
+                    required 
+                    className="rounded-xl bg-background border-border focus:border-[#062a4d] focus:ring-[#062a4d]/20"
+                  />
                 </div>
 
-                <div className="space-y-1">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea id="description" name="description" placeholder="Enter task description" rows={3} />
+                <div className="space-y-2">
+                  <Label htmlFor="description" className="text-sm font-semibold text-foreground">Description</Label>
+                  <Textarea 
+                    id="description" 
+                    name="description" 
+                    placeholder="Enter task description" 
+                    rows={3} 
+                    className="rounded-xl bg-background border-border focus:border-[#062a4d] focus:ring-[#062a4d]/20"
+                  />
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <div className="flex-1 space-y-1">
-                    <Label htmlFor="assignee">Assignee</Label>
-                    <Input id="assignee" name="assignee" placeholder="Who should do this?" className="h-10" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="assignee" className="text-sm font-semibold text-foreground">Assignee</Label>
+                    <Input 
+                      id="assignee" 
+                      name="assignee" 
+                      placeholder="Who should do this?" 
+                      className="rounded-xl bg-background border-border focus:border-[#062a4d] focus:ring-[#062a4d]/20"
+                    />
                   </div>
 
-                  <div className="flex-1 space-y-1">
-                    <Label htmlFor="priority">Priority</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="priority" className="text-sm font-semibold text-foreground">Priority</Label>
                     <Select name="priority" defaultValue="medium">
-                      <SelectTrigger className="h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700">
+                      <SelectTrigger className="rounded-xl bg-background border-border focus:border-[#062a4d] focus:ring-[#062a4d]/20">
                         <SelectValue placeholder="Select priority" />
                       </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg">
+                      <SelectContent className="bg-background border-border rounded-xl shadow-2xl">
                         {["low", "medium", "high"].map((priority, key) => (
                           <SelectItem
                             key={key}
                             value={priority}
-                            className="capitalize text-sm px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-200 dark:focus:bg-gray-600"
+                            className="capitalize text-sm px-4 py-3 hover:bg-muted focus:bg-muted rounded-lg m-1"
                           >
                             {priority}
                           </SelectItem>
@@ -743,13 +815,21 @@ export default function BoardPage() {
                   </div>
                 </div>
 
-                <div className="space-y-1">
-                  <Label htmlFor="dueDate">Due Date</Label>
-                  <Input type="date" id="dueDate" name="dueDate" />
+                <div className="space-y-2">
+                  <Label htmlFor="dueDate" className="text-sm font-semibold text-foreground">Due Date</Label>
+                  <Input 
+                    type="date" 
+                    id="dueDate" 
+                    name="dueDate" 
+                    className="rounded-xl bg-background border-border focus:border-[#062a4d] focus:ring-[#062a4d]/20"
+                  />
                 </div>
 
                 <div className="pt-2">
-                  <Button type="submit" className="w-full">
+                  <Button 
+                    type="submit" 
+                    className="w-full rounded-xl bg-[#062a4d] hover:bg-[#062a4d]/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 py-3"
+                  >
                     Create Task
                   </Button>
                 </div>
@@ -758,91 +838,95 @@ export default function BoardPage() {
           </Dialog>
         </div>
 
-{/* Board Column */}
-<DndContext
-  sensors={sensors}
-  collisionDetection={rectIntersection}
-  onDragStart={handleDragStart}
-  onDragOver={handleDragOver}
-  onDragEnd={handleDragEnd}
->
-  <div
-    className="flex flex-col lg:flex-row lg:space-x-6 lg:overflow-x-auto
-               lg:pb-6 lg:px-4 lg:-mx-4
-               bg-gradient-to-br from-gray-50 via-white to-gray-100
-               dark:from-gray-900 dark:via-gray-950 dark:to-gray-900
-               rounded-2xl border border-gray-200 dark:border-gray-800
-               shadow-xl p-6
-               lg:[&::-webkit-scrollbar]:h-2
-               lg:[&::-webkit-scrollbar-track]:bg-gray-200 dark:lg:[&::-webkit-scrollbar-track]:bg-gray-800
-               lg:[&::-webkit-scrollbar-thumb]:bg-gradient-to-r lg:[&::-webkit-scrollbar-thumb]:from-indigo-400 lg:[&::-webkit-scrollbar-thumb]:to-pink-500
-               lg:[&::-webkit-scrollbar-thumb]:rounded-full
-               transition-all duration-300 ease-in-out
-               space-y-6 lg:space-y-0"
-  >
-    {filteredColumns.map((column, key) => (
-      <DropableColumn
-        key={key}
-        column={column}
-        onCreateTask={handleCreateTask}
-        onEditColumn={handleEditColumn}
-      >
-        <SortableContext
-          items={column.tasks.map((task) => task.id)}
-          strategy={verticalListSortingStrategy}
+{/* Board Columns */}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={rectIntersection}
+          onDragStart={handleDragStart}
+          onDragOver={handleDragOver}
+          onDragEnd={handleDragEnd}
         >
-          <div className="space-y-3">
-            {column.tasks.map((task, key) => (
-              <SortableTask task={task} key={key} />
-            ))}
+          <div className="relative">
+            <div
+              className="flex flex-col lg:flex-row gap-6 lg:overflow-x-auto lg:pb-6 p-6 
+                         bg-gradient-to-br from-card/30 via-card/50 to-card/80 
+                         backdrop-blur-sm rounded-3xl border-2 border-border/30
+                         shadow-2xl min-h-[600px]
+                         lg:[&::-webkit-scrollbar]:h-3
+                         lg:[&::-webkit-scrollbar-track]:bg-muted/30 lg:[&::-webkit-scrollbar-track]:rounded-full
+                         lg:[&::-webkit-scrollbar-thumb]:bg-gradient-to-r lg:[&::-webkit-scrollbar-thumb]:from-[#062a4d]/60 lg:[&::-webkit-scrollbar-thumb]:to-[#062a4d]/40
+                         lg:[&::-webkit-scrollbar-thumb]:rounded-full lg:[&::-webkit-scrollbar-thumb]:border-2 lg:[&::-webkit-scrollbar-thumb]:border-background
+                         transition-all duration-500 ease-in-out hover:shadow-3xl
+                         space-y-6 lg:space-y-0"
+            >
+              {filteredColumns.map((column, key) => (
+                <DropableColumn
+                  key={key}
+                  column={column}
+                  onCreateTask={handleCreateTask}
+                  onEditColumn={handleEditColumn}
+                >
+                  <SortableContext
+                    items={column.tasks.map((task) => task.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <div className="space-y-3">
+                      {column.tasks.map((task, key) => (
+                        <SortableTask task={task} key={key} />
+                      ))}
+                    </div>
+                  </SortableContext>
+                </DropableColumn>
+              ))}
+
+              {/* Add Column Button */}
+              <button
+                onClick={() => setIsCreatingColumn(true)}
+                className="min-w-[280px] sm:min-w-[320px] h-fit px-6 py-8 rounded-2xl
+                           bg-gradient-to-br from-muted/50 to-muted/80 backdrop-blur-sm
+                           hover:from-[#062a4d]/10 hover:to-[#062a4d]/20 
+                           border-2 border-dashed border-border hover:border-[#062a4d]/50
+                           text-muted-foreground hover:text-[#062a4d]
+                           cursor-pointer flex flex-col items-center justify-center gap-3 font-medium
+                           transition-all duration-300 focus:outline-none
+                           focus:ring-4 focus:ring-[#062a4d]/20 hover:scale-105 hover:shadow-xl group"
+              >
+                <div className="p-3 bg-background rounded-2xl group-hover:bg-[#062a4d]/10 transition-colors">
+                  <Plus className="w-6 h-6" />
+                </div>
+                <div className="text-center">
+                  <p className="font-semibold">Add another list</p>
+                  <p className="text-xs opacity-70">Organize more tasks</p>
+                </div>
+              </button>
+
+              <DragOverlay>
+                {activeTask ? <TaskOverlay task={activeTask} /> : null}
+              </DragOverlay>
+            </div>
           </div>
-        </SortableContext>
-      </DropableColumn>
-    ))}
-
-    {/* Add Column Button */}
-  <button
-  onClick={() => setIsCreatingColumn(true)}
-  className="min-w-[250px] h-fit px-3 py-3 rounded-lg
-             bg-gray-100 dark:bg-gray-700/60
-             hover:bg-gray-200 dark:hover:bg-gray-600
-             text-gray-700 dark:text-gray-200
-             cursor-pointer flex items-center gap-2 font-medium
-             transition-colors duration-200 focus:outline-none
-             focus:ring-2 focus:ring-indigo-400"
->
-  <Plus className="w-4 h-4" />
-  Add another list
-</button>
-
-    <DragOverlay>
-      {activeTask ? <TaskOverlay task={activeTask} /> : null}
-    </DragOverlay>
-  </div>
-</DndContext>
+        </DndContext>
       </main>
     </div>
 
    {/* Create Column Dialog */}
 <Dialog open={isCreatingColumn} onOpenChange={setIsCreatingColumn}>
-  <DialogContent
-    className="bg-gradient-to-br from-white via-gray-50 to-gray-100 
-               dark:from-gray-900 dark:via-gray-950 dark:to-gray-900
-               p-6 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800
-               transition-all duration-300 ease-in-out"
-  >
-    <DialogHeader>
-      <DialogTitle className="text-2xl font-bold">
+  <DialogContent className="sm:max-w-md w-full rounded-2xl shadow-2xl border-border bg-background backdrop-blur-sm">
+    <DialogHeader className="pb-6 border-b border-border/50">
+      <DialogTitle className="text-2xl font-bold text-foreground flex items-center gap-2">
+        <div className="p-2 bg-[#062a4d]/10 rounded-xl">
+          <Plus className="h-5 w-5 text-[#062a4d]" />
+        </div>
         Create New Column
       </DialogTitle>
-      <p className="text-gray-500 dark:text-gray-400">
+      <p className="text-sm text-muted-foreground">
         Add a new column to organize your tasks more efficiently
       </p>
     </DialogHeader>
 
-    <form onSubmit={handleCreateColumn} className="space-y-5 mt-4">
-      <div>
-        <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+    <form onSubmit={handleCreateColumn} className="space-y-6 pt-6">
+      <div className="space-y-3">
+        <Label htmlFor="columnTitle" className="text-sm font-semibold text-foreground">
           Column Title
         </Label>
         <Input
@@ -851,23 +935,23 @@ export default function BoardPage() {
           onChange={(e) => setNewColumnTitle(e.target.value)}
           placeholder="Enter column title..."
           required
-          className="mt-2 border-gray-300 dark:border-gray-700 rounded-lg shadow-sm 
-                     focus:border-indigo-500 focus:ring focus:ring-indigo-300 dark:focus:ring-indigo-500 
-                     transition-all duration-300"
+          className="rounded-xl bg-background border-border focus:border-[#062a4d] focus:ring-[#062a4d]/20"
         />
       </div>
 
-      <div className="flex justify-end space-x-3">
+      <div className="flex gap-3 pt-6 border-t border-border/50">
         <Button
           type="button"
           variant="outline"
           onClick={() => setIsCreatingColumn(false)}
+          className="flex-1 rounded-xl"
         >
           Cancel
         </Button>
         <Button
           type="submit"
-          >
+          className="flex-1 rounded-xl bg-[#062a4d] hover:bg-[#062a4d]/90 text-white"
+        >
           Create Column
         </Button>
       </div>
@@ -876,39 +960,35 @@ export default function BoardPage() {
 </Dialog>
 
 <Dialog open={isEditingColumn} onOpenChange={setIsEditingColumn}>
-  <DialogContent
-    className="bg-gradient-to-br from-white via-gray-50 to-gray-100 
-               dark:from-gray-900 dark:via-gray-950 dark:to-gray-900
-               p-6 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800
-               transition-all duration-300 ease-in-out"
-  >
-    <DialogHeader>
-      <DialogTitle className="text-2xl font-bold">
+  <DialogContent className="sm:max-w-md w-full rounded-2xl shadow-2xl border-border bg-background backdrop-blur-sm">
+    <DialogHeader className="pb-6 border-b border-border/50">
+      <DialogTitle className="text-2xl font-bold text-foreground flex items-center gap-2">
+        <div className="p-2 bg-[#062a4d]/10 rounded-xl">
+          <MoreHorizontal className="h-5 w-5 text-[#062a4d]" />
+        </div>
         Edit Column
       </DialogTitle>
-      <p className="text-gray-500 dark:text-gray-400">
+      <p className="text-sm text-muted-foreground">
         Update the title of your column
       </p>
     </DialogHeader>
 
-    <form onSubmit={handleUpdateColumn} className="space-y-5 mt-4">
-      <div>
-        <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+    <form onSubmit={handleUpdateColumn} className="space-y-6 pt-6">
+      <div className="space-y-3">
+        <Label htmlFor="editColumnTitle" className="text-sm font-semibold text-foreground">
           Column Title
         </Label>
         <Input
-          id="columnTitle"
+          id="editColumnTitle"
           value={editingColumnTitle}
           onChange={(e) => setEditingColumnTitle(e.target.value)}
           placeholder="Enter column title..."
           required
-          className="mt-2 border-gray-300 dark:border-gray-700 rounded-lg shadow-sm 
-                     focus:border-indigo-500 focus:ring focus:ring-indigo-300 dark:focus:ring-indigo-500 
-                     transition-all duration-300"
+          className="rounded-xl bg-background border-border focus:border-[#062a4d] focus:ring-[#062a4d]/20"
         />
       </div>
 
-      <div className="flex justify-end space-x-3">
+      <div className="flex gap-3 pt-6 border-t border-border/50">
         <Button
           type="button"
           variant="outline"
@@ -917,13 +997,15 @@ export default function BoardPage() {
             setEditingColumnTitle("")
             setEditingColumn(null)
           }}
+          className="flex-1 rounded-xl"
         >
           Cancel
         </Button>
         <Button
           type="submit"
-          >
-          Save changes
+          className="flex-1 rounded-xl bg-[#062a4d] hover:bg-[#062a4d]/90 text-white"
+        >
+          Save Changes
         </Button>
       </div>
     </form>
