@@ -214,6 +214,7 @@ export default function Dashboard() {
                   variant={viewMode === "grid" ? "default" : "ghost"}
                   size="sm"
                   onClick={() => setViewMode("grid")}
+                  className="cursor-pointer"
                 >
                   <Grid3x3 />
                 </Button>
@@ -221,6 +222,7 @@ export default function Dashboard() {
                   variant={viewMode === "list" ? "default" : "ghost"}
                   size="sm"
                   onClick={() => setViewMode("list")}
+                  className="cursor-pointer"
                 >
                   <List />
                 </Button>
@@ -229,7 +231,7 @@ export default function Dashboard() {
               <Button 
                 variant="outline" 
                 onClick={() => setIsFilterOpen(true)}
-                className="flex-1 sm:flex-none border-border hover:bg-muted text-sm"
+                className="flex-1 sm:flex-none border-border hover:bg-muted cursor-pointer text-sm"
                 size="sm"
               >
                 <Filter className="h-4 w-4 mr-2" />
@@ -239,7 +241,7 @@ export default function Dashboard() {
 
               <Button 
                 onClick={handleCreateBoard}
-                className="flex-1 sm:flex-none bg-[#062a4d] hover:bg-[#062a4d]/90 text-white shadow-sm hover:shadow-md transition-all duration-200 text-sm"
+                className="flex-1 sm:flex-none bg-[#062a4d] hover:bg-[#062a4d]/90 cursor-pointer text-white shadow-sm hover:shadow-md transition-all duration-200 text-sm"
                 size="sm"
               >
                 <Plus className="h-4 w-4 mr-2" />
@@ -463,13 +465,13 @@ export default function Dashboard() {
         <Button 
           variant="outline" 
           onClick={clearFilters} 
-          className="w-full sm:w-auto border-border hover:bg-muted"
+          className="w-full sm:w-auto border-border hover:bg-muted cursor-pointer"
         >
           Clear Filters
         </Button>
         <Button 
           onClick={() => setIsFilterOpen(false)} 
-          className="w-full sm:w-auto bg-[#062a4d] hover:bg-[#062a4d]/90 text-white"
+          className="w-full sm:w-auto bg-[#062a4d] hover:bg-[#062a4d]/90 text-white cursor-pointer"
         >
           Apply Filters
         </Button>
@@ -518,13 +520,13 @@ export default function Dashboard() {
       <Button
         onClick={() => setShowUpgradeDialog(false)}
         variant="outline"
-        className="w-full sm:w-auto border-border hover:bg-muted"
+        className="w-full sm:w-auto border-border hover:bg-muted cursor-pointer"
       >
         Cancel
       </Button>
       <Button
         onClick={() => router.push("/pricing")}
-        className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-white font-semibold shadow-sm hover:shadow-md transition-all"
+        className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-white cursor-pointer font-semibold shadow-sm hover:shadow-md transition-all"
       >
         View Plans
       </Button>

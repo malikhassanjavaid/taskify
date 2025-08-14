@@ -64,7 +64,7 @@ function DropableColumn({
     <Button
       variant="ghost"
       size="sm"
-      className="rounded-xl hover:bg-muted transition-all duration-200 hover:scale-105"
+      className="rounded-xl hover:bg-muted transition-all duration-200 cursor-pointer hover:scale-105"
       onClick={() => onEditColumn(column)}
     >
       <MoreHorizontal className="h-4 w-4 text-muted-foreground hover:text-foreground"/>
@@ -79,7 +79,7 @@ function DropableColumn({
       <DialogTrigger asChild>
         <Button
           variant="outline"
-          className="flex items-center gap-2 text-sm font-medium border-2 border-dashed border-border hover:border-[#062a4d]/50 hover:bg-[#062a4d]/5 transition-all duration-200 rounded-xl py-3"
+          className="flex items-center gap-2 text-sm cursor-pointer font-medium border-2 border-dashed border-border hover:border-[#062a4d]/50 hover:bg-[#062a4d]/5 transition-all duration-200 rounded-xl py-3"
         >
           <Plus className="h-4 w-4" />
           Add Task
@@ -165,7 +165,7 @@ function DropableColumn({
           <div className="pt-2">
             <Button
               type="submit"
-              className="w-full rounded-xl bg-[#062a4d] hover:bg-[#062a4d]/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 py-3"
+              className="w-full rounded-xl cursor-pointer bg-[#062a4d] hover:bg-[#062a4d]/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 py-3"
             >
               Create Task
             </Button>
@@ -627,10 +627,10 @@ export default function BoardPage() {
             </div>
 
             <div className="flex justify-end gap-3 pt-6 border-t border-border/50">
-              <Button type="button" variant="outline" onClick={() => setIsEditingTitle(false)} className="rounded-xl">
+              <Button type="button" variant="outline" onClick={() => setIsEditingTitle(false)} className="rounded-xl cursor-pointer">
                 Cancel
               </Button>
-              <Button type="submit" className="rounded-xl bg-[#062a4d] hover:bg-[#062a4d]/90 text-white">Save Changes</Button>
+              <Button type="submit" className="rounded-xl bg-[#062a4d] hover:bg-[#062a4d]/90 text-white cursor-pointer">Save Changes</Button>
             </div>
           </form>
         </DialogContent>
@@ -674,7 +674,7 @@ export default function BoardPage() {
                       key={key}
                       type="button"
                       variant="outline"
-                      className={`capitalize px-3 py-2 text-sm rounded-xl transition-all ${
+                      className={`capitalize px-3 py-2 text-sm rounded-xl transition-all cursor-pointer ${
                         isSelected 
                           ? `${priorityConfig.color} border-2` 
                           : "hover:bg-muted border-border"
@@ -703,13 +703,13 @@ export default function BoardPage() {
                 onClick={clearFilters} 
                 type="button" 
                 variant="outline" 
-                className="flex-1 rounded-xl"
+                className="flex-1 rounded-xl cursor-pointer"
               >
                 Clear Filters
               </Button>
               <Button 
                 type="button" 
-                className="flex-1 rounded-xl bg-[#062a4d] hover:bg-[#062a4d]/90 text-white" 
+                className="flex-1 rounded-xl bg-[#062a4d] hover:bg-[#062a4d]/90 text-white cursor-pointer" 
                 onClick={() => setIsFilterOpen(false)}
               >
                 Apply Filters
@@ -749,7 +749,7 @@ export default function BoardPage() {
 
           <Dialog>
             <DialogTrigger asChild>
-              <Button className="bg-[#062a4d] hover:bg-[#062a4d]/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 rounded-xl px-6 py-3">
+              <Button className="bg-[#062a4d] hover:bg-[#062a4d]/90 cursor-pointer text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 rounded-xl px-6 py-3">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Task
               </Button>
@@ -828,7 +828,7 @@ export default function BoardPage() {
                 <div className="pt-2">
                   <Button 
                     type="submit" 
-                    className="w-full rounded-xl bg-[#062a4d] hover:bg-[#062a4d]/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 py-3"
+                    className="w-full cursor-pointer rounded-xl bg-[#062a4d] hover:bg-[#062a4d]/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 py-3"
                   >
                     Create Task
                   </Button>

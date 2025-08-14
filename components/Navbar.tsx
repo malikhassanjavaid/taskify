@@ -121,7 +121,7 @@ export default function Navbar({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="flex-shrink-0 h-6 w-6 sm:h-8 sm:w-8 p-0 hover:bg-muted transition-all duration-200 hover:scale-105"
+                      className="flex-shrink-0 h-6 w-6 sm:h-8 sm:w-8 p-0 hover:bg-muted transition-all duration-200 hover:scale-105 cursor-pointer"
                       onClick={onEditBoard}
                     >
                       <MoreHorizontal className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground hover:text-foreground" />
@@ -138,7 +138,7 @@ export default function Navbar({
                 <Button
                   variant="outline"
                   size="sm"
-                  className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm bg-background hover:bg-muted transition-all duration-200 px-2 sm:px-3 py-1 sm:py-2"
+                  className="flex items-center  cursor-pointer gap-1 sm:gap-2 text-xs sm:text-sm bg-background hover:bg-muted transition-all duration-200 px-2 sm:px-3 py-1 sm:py-2"
                   onClick={onFilterClick}
                 >
                   <Filter className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -204,7 +204,7 @@ export default function Navbar({
                 <Link href="/dashboard">
                   <Button 
                     size="sm" 
-                    className="bg-[#062a4d] hover:bg-[#062a4d]/90 text-white flex items-center gap-2 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 text-sm lg:text-base px-3 lg:px-4"
+                    className="bg-[#062a4d] hover:bg-[#062a4d]/90 text-white cursor-pointer flex items-center gap-2 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 text-sm lg:text-base px-3 lg:px-4"
                   >
                     Dashboard <ArrowRight className="w-4 h-4" />
                   </Button>
@@ -216,7 +216,7 @@ export default function Navbar({
                   <Button 
                     size="sm" 
                     variant="ghost" 
-                    className="text-sm lg:text-base hover:bg-muted transition-all duration-200 px-3 lg:px-4"
+                    className="text-sm lg:text-base cursor-pointer hover:bg-muted transition-all duration-200 px-3 lg:px-4"
                   >
                     Sign In
                   </Button>
@@ -224,7 +224,7 @@ export default function Navbar({
                 <SignUpButton>
                   <Button 
                     size="sm" 
-                    className="text-sm lg:text-base bg-[#062a4d] hover:bg-[#062a4d]/90 text-white shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 px-3 lg:px-4"
+                    className="text-sm lg:text-base bg-[#062a4d] hover:bg-[#062a4d]/90 text-white cursor-pointer shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 px-3 lg:px-4"
                   >
                     Sign Up
                   </Button>
